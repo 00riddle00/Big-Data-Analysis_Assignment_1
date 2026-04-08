@@ -33,20 +33,20 @@ Giedraitis](https://github.com/00riddle00)
   - [Amdahl’s Law (Bonus)](#amdahls-law-bonus)
   - [Final Note](#final-note)
 - [Part II — Our Implementation](#part-ii--our-implementation)
-- [Shadow Fleet Detection with Parallel Computing](#shadow-fleet-detection-with-parallel-computing)
-  - [Architecture](#architecture)
-  - [Setup](#setup)
-  - [Running the Pipeline](#running-the-pipeline)
-  - [Running Tests](#running-tests)
-  - [Key Design Decisions](#key-design-decisions)
-    - [Memory management (Anti-AI / Big Data constraint)](#memory-management-anti-ai--big-data-constraint)
-    - [Dirty Data Trap](#dirty-data-trap)
-    - [Parallelisation strategy](#parallelisation-strategy)
-    - [Two-day continuity](#two-day-continuity)
-  - [DFSI Formula](#dfsi-formula)
-  - [Anomaly Thresholds](#anomaly-thresholds)
-  - [Project Structure](#project-structure)
-  - [Notes](#notes)
+  - [Shadow Fleet Detection with Parallel Computing](#shadow-fleet-detection-with-parallel-computing)
+    - [Architecture](#architecture)
+    - [Setup](#setup)
+    - [Running the Pipeline](#running-the-pipeline)
+    - [Running Tests](#running-tests)
+    - [Key Design Decisions](#key-design-decisions)
+      - [Memory management (Anti-AI / Big Data constraint)](#memory-management-anti-ai--big-data-constraint)
+      - [Dirty Data Trap](#dirty-data-trap)
+      - [Parallelisation strategy](#parallelisation-strategy)
+      - [Two-day continuity](#two-day-continuity)
+    - [DFSI Formula](#dfsi-formula)
+    - [Anomaly Thresholds](#anomaly-thresholds)
+    - [Project Structure](#project-structure)
+    - [Notes](#notes)
 - [Part III — Conclusion](#part-iii--conclusion)
 <!--toc:end-->
 
@@ -192,7 +192,7 @@ Remember, I am not just looking for code that "runs." I am looking for code that
 
 # Part II — Our Implementation
 
-# Shadow Fleet Detection with Parallel Computing
+## Shadow Fleet Detection with Parallel Computing
 
 Dataset: Danish AIS Data – August 13–14, 2025  
 Files processed: `aisdk-2025-08-13.csv` (5.4 GB) + `aisdk-2025-08-14.csv` (5.6 GB)  
