@@ -206,24 +206,24 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# ------------------------------------------------
-# Pipeline
-# ------------------------------------------------
+# ---------------------------------------------------------
+# Pipeline (comment if you want to keep pipeline artifacts)
+# ---------------------------------------------------------
 
 # Pipeline intermediates
-partitioned/
-analysis/
-loitering/
-benchmark_results/
-run_metadata*.json
+#partitioned/
+#analysis/
+#loitering/
+#benchmark_results/
+#run_metadata*.json
 
-# -----------------------------------------------
-# Profiling
-# -----------------------------------------------
+# -----------------------------------------------------------
+# Profiling (comment if you want to keep profiling artifacts)
+# -----------------------------------------------------------
 
 # Memory profiling artifacts
-mprofile_*.dat
-*.prof
+#mprofile_*.dat
+#*.prof
 
 # -----------------------------------------------
 # Datasets
