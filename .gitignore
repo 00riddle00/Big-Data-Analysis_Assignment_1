@@ -225,6 +225,9 @@ __marimo__/
 #mprofile_*.dat
 #*.prof
 
+# Custom directory for profiling artifacts
+#profiling/
+
 # -----------------------------------------------
 # Datasets
 # -----------------------------------------------
