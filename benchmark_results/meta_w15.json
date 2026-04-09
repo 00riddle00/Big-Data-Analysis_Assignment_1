@@ -1,0 +1,17 @@
+{
+  "files": [
+    "data_arch/aisdk-2025-08-13.csv",
+    "data_arch/aisdk-2025-08-14.csv"
+  ],
+  "num_workers": 15,
+  "chunk_size": 50000,
+  "timings": {
+    "partition_s": 1159.44,
+    "detect_s": 29.19,
+    "loiter_s": 1.78,
+    "score_s": 0.02,
+    "total_s": 1190.43
+  },
+  "num_shards": 15,
+  "vessels_scored": 3257
+}
