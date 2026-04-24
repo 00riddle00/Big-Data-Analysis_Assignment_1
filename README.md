@@ -13,40 +13,43 @@ Giedraitis](https://github.com/00riddle00)
 ## Table of Contents:
 
 <!--toc:start-->
+- [Assignment 1: Maritime "Shadow Fleet" Detection with Parallel Computing](#assignment-1-maritime-shadow-fleet-detection-with-parallel-computing)
+  - [Table of Contents:](#table-of-contents)
 - [Part I — Assignment Specification](#part-i--assignment-specification)
   - [Introduction](#introduction)
   - [Our Goal](#our-goal)
-  - [Dataset & Rules](#dataset--rules)
+  - [Dataset \& Rules](#dataset--rules)
     - [ANTI-AI / BIG DATA CONSTRAINTS](#anti-ai--big-data-constraints)
   - [The Tasks](#the-tasks)
     - [Task 1: Low-Memory Parallel Partitioning](#task-1-low-memory-parallel-partitioning)
     - [Task 2: Implementation of Parallel Processing](#task-2-implementation-of-parallel-processing)
-    - [Task 3: Shadow Fleet Detection Analytics & DFSI](#task-3-shadow-fleet-detection-analytics--dfsi)
+    - [Task 3: Shadow Fleet Detection Analytics \& DFSI](#task-3-shadow-fleet-detection-analytics--dfsi)
       - [DFSI Calculation](#dfsi-calculation)
     - [Task 4: Hardware-Specific Performance Evaluation](#task-4-hardware-specific-performance-evaluation)
       - [Speedup Analysis](#speedup-analysis)
       - [Memory Profiling](#memory-profiling)
       - [Chunk Optimization](#chunk-optimization)
-    - [Task 5: Presentation & Real-World Verification](#task-5-presentation--real-world-verification)
+    - [Task 5: Presentation \& Real-World Verification](#task-5-presentation--real-world-verification)
   - [Submission Guidelines](#submission-guidelines)
   - [Evaluation Criteria (10 Points Total + 1 Bonus)](#evaluation-criteria-10-points-total--1-bonus)
   - [Amdahl’s Law (Bonus)](#amdahls-law-bonus)
   - [Final Note](#final-note)
 - [Part II — Our Implementation](#part-ii--our-implementation)
   - [Shadow Fleet Detection with Parallel Computing](#shadow-fleet-detection-with-parallel-computing)
-    - [Architecture](#architecture)
-    - [Setup](#setup)
-    - [Running the Pipeline](#running-the-pipeline)
-    - [Running Tests](#running-tests)
-    - [Key Design Decisions](#key-design-decisions)
-      - [Memory management (Anti-AI / Big Data constraint)](#memory-management-anti-ai--big-data-constraint)
-      - [Dirty Data Trap](#dirty-data-trap)
-      - [Parallelisation strategy](#parallelisation-strategy)
-      - [Two-day continuity](#two-day-continuity)
-    - [DFSI Formula](#dfsi-formula)
-    - [Anomaly Thresholds](#anomaly-thresholds)
-    - [Project Structure](#project-structure)
-    - [Notes](#notes)
+  - [Data Insights](#data-insights)
+  - [Architecture](#architecture)
+  - [Setup](#setup)
+  - [Running the Pipeline](#running-the-pipeline)
+  - [Running Tests](#running-tests)
+  - [Key Design Decisions](#key-design-decisions)
+    - [Memory management (Anti-AI / Big Data constraint)](#memory-management-anti-ai--big-data-constraint)
+    - [Dirty Data Trap](#dirty-data-trap)
+    - [Parallelisation strategy](#parallelisation-strategy)
+    - [Two-day continuity](#two-day-continuity)
+  - [DFSI Formula](#dfsi-formula)
+  - [Anomaly Thresholds](#anomaly-thresholds)
+  - [Project Structure](#project-structure)
+  - [Notes](#notes)
 - [Part III — Conclusion](#part-iii--conclusion)
 <!--toc:end-->
 
@@ -90,7 +93,7 @@ Strategize and implement the division of millions of AIS rows into parallelizabl
 
 - Write a custom streaming partitioner that reads the file line-by-line and dispatches chunks to worker processes.
 - **The "Dirty Data" Trap:** The dataset contains default/invalid MMSI numbers (e.g., 000000000, 111111111, 123456789) from unconfigured transponders. If you blindly group by MMSI, your workers will crash from memory overload on these massive default groups. You must explicitly filter or handle these in your partitioning stream.
-- Keep in mind that not the only faulty data.
+- Keep in mind that this is not the only faulty data.
 
 ---
 
@@ -197,6 +200,45 @@ Remember, I am not just looking for code that "runs." I am looking for code that
 Dataset: Danish AIS Data – August 13–14, 2025
 Files processed: `aisdk-2025-08-13.csv` (5.4 GB) + `aisdk-2025-08-14.csv` (5.6 GB)
 Total rows: ~64 million
+
+---
+
+## Data Insights
+
+To find unique vessels and other transport or infrastruture objects per category across
+both files, run:
+
+```bash
+awk -F, 'NR>1 {print $2 "," $3}' \
+  data_arch/aisdk-2025-08-13.csv \
+  data_arch/aisdk-2025-08-14.csv |
+  sort -u |
+  awk -F, '
+    {count[$1]++}
+    END {
+      for (type in count)
+        printf "%d\t%s\n", count[type], type
+    }
+  ' |
+  sort -nr \
+  > unique_ships_aug13_aug14.txt
+  ```
+
+Numbers for our data:
+
+| Count | Type                          |
+| ----- | ----------------------------- |
+| 9479  | Class B                       |
+| 6205  | Class A                       |
+| 604   | AtoN                          |
+| 153   | Base Station                  |
+| 26    | SAR Airborne                  |
+| 19    | Search and Rescue Transponder |
+| 2     | Man Overboard Device          |
+| 1     | Type of mobile                |
+| 1     | Emergency PIRB                |
+
+Total unique AIS senders: 16,490
 
 ---
 
