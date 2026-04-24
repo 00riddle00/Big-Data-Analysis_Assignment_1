@@ -66,19 +66,19 @@ Process massive, gigabyte-scale vessel tracking datasets using parallel computin
 - **Unique Selection:** Each student/group must select a single two day’s data. Pick a different days and coordinate in the class chat to avoid overlapping analyses.
 
 **Our selection:**
-- Dates: 2025-08-13 and 2025-08-14  
-- Motivation: We specifically chose large files to practice real big data processing (zip files ~1GB each, ~5.5GB unzipped each)  
+- Dates: 2025-08-13 and 2025-08-14
+- Motivation: We specifically chose large files to practice real big data processing (zip files ~1GB each, ~5.5GB unzipped each)
 - Files:
-  - aisdk-2025-08-13.csv  
-  - aisdk-2025-08-14.csv  
+  - aisdk-2025-08-13.csv
+  - aisdk-2025-08-14.csv
 
 ### ANTI-AI / BIG DATA CONSTRAINTS
 
-1. **The pandas Ban:**  
-   You may not use `pandas.read_csv()` to load the entire dataset into memory. Real Big Data does not fit in RAM. You must parse the data using Python’s native `csv` module or file generators (`yield`), passing chunks or streams to your parallel workers.  
+1. **The pandas Ban:**
+   You may not use `pandas.read_csv()` to load the entire dataset into memory. Real Big Data does not fit in RAM. You must parse the data using Python’s native `csv` module or file generators (`yield`), passing chunks or streams to your parallel workers.
    *(Note: You may use pandas at the very end to format or graph your final top 5 results).*
 
-2. **Memory Limit:**  
+2. **Memory Limit:**
    Your solution must process the 2GB+ daily CSV file staying strictly under 1GB of RAM per CPU core.
 
 ---
@@ -194,8 +194,8 @@ Remember, I am not just looking for code that "runs." I am looking for code that
 
 ## Shadow Fleet Detection with Parallel Computing
 
-Dataset: Danish AIS Data – August 13–14, 2025  
-Files processed: `aisdk-2025-08-13.csv` (5.4 GB) + `aisdk-2025-08-14.csv` (5.6 GB)  
+Dataset: Danish AIS Data – August 13–14, 2025
+Files processed: `aisdk-2025-08-13.csv` (5.4 GB) + `aisdk-2025-08-14.csv` (5.6 GB)
 Total rows: ~64 million
 
 ---
@@ -223,7 +223,7 @@ data_arch/*.csv  →  cli.py  →  pipeline.py  →  partition.py  →  parsing.
 ## Setup
 
 ```bash
-git clone <repo-url>
+git clone <repo-url> ./shadow_fleet
 cd shadow_fleet
 
 pip install -r requirements.txt
