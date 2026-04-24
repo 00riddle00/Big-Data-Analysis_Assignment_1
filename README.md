@@ -156,7 +156,7 @@ Create a maximum of 6 slides to defend your architecture:
 
 ## Submission Guidelines
 
-- **Deadline:** TBA
+- **Deadline:** TBA (April / May 2026)
 
 - **Code Repository:** Provide a link to your GitHub/GitLab repository. The repo must include a clean README.md, your .py scripts, and a requirements.txt. Do not upload the 2GB CSV file to GitHub.
 - **Presentation:** Submit your 6 slides in PDF format.
@@ -198,7 +198,9 @@ Remember, I am not just looking for code that "runs." I am looking for code that
 ## Shadow Fleet Detection with Parallel Computing
 
 Dataset: Danish AIS Data – August 13–14, 2025
+
 Files processed: `aisdk-2025-08-13.csv` (5.4 GB) + `aisdk-2025-08-14.csv` (5.6 GB)
+
 Total rows: ~64 million
 
 ---
