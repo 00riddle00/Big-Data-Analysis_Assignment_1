@@ -146,7 +146,7 @@
     \textbf{\small Pipeline}\\[3pt]
     \begin{enumerate}\small
       \item \textbf{csv.reader} line-by-line\\
-            {\footnotesize No \texttt{pandas.read\_csv()} --- pure Python generator}
+            {\footnotesize No \texttt{pandas.read\_csv()} -- pure Python generator}
       \item \textbf{parsing.py} filters\\
             {\footnotesize Class A only \(\cdot\) invalid MMSI \(\cdot\) bad coords}
       \item \textbf{hash(MMSI) \% N} shards\\
@@ -159,7 +159,7 @@
   \end{column}
 
   \begin{column}{0.48\textwidth}
-    \textbf{\small Dirty Data --- Filtered Out}\\[3pt]
+    \textbf{\small Dirty Data -- Filtered Out}\\[3pt]
     \begin{itemize}\footnotesize
       \item Non-Class A (Class B, AtoN, Base Station, SAR)
       \item MMSI 000000000 / 111111111 / 123456789
@@ -301,8 +301,12 @@
 \vspace{3pt}
 \begin{beamercolorbox}[sep=3pt,rounded=true,wd=\textwidth]{title}
 \scriptsize
-\textbf{Finding:} INVINCIBLE broadcasts AIS pings 6\,715 nm apart within minutes,
-which is physically impossible and strongly supports identity cloning.
+\textbf{Location:} Fehmarn Belt -- primary gateway between the Baltic Sea and North Sea, through which vessels exiting Russian Baltic ports must pass.
+
+\vspace{9pt}
+
+\textbf{Finding:} INVINCIBLE detected here with 44 impossible pings spanning 6\,715 nm, suggesting identity cloning to mask cargo movements between
+sanctioned Russian ports and Western markets.
 \end{beamercolorbox}
 
 \end{frame}
