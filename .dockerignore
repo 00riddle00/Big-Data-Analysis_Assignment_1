@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+.git/
+.venv/
+analysis/
+benchmark_results/
+data_arch/
+loitering/
+partitioned/
+presentation/
+profiling/
