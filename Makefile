@@ -26,7 +26,7 @@ PRES_DIR := presentation
 PRESENTATION := $(PRES_DIR)/presentation_1st.pdf
 TOP5_CSV     := analysis/top5_vessels.csv
 SPEEDUP_JSON := benchmark_results/speedup_results.json
-MPROF_PNG    := profiling/mprof.png
+MPROF_PNG    := profiling/mprof_RAM_graph.png
 FOLIUM_MAP   := analysis/top5_map.html
 
 # --- Phony targets ------------------------------------------------------------
@@ -110,7 +110,7 @@ $(MPROF_PNG): .venv/.stamp
 	mkdir -p profiling
 	$(VENV_BIN)/mprof run $(VENV_BIN)/python cli.py
 	mv mprofile_*.dat profiling/
-	$(VENV_BIN)/mprof plot profiling/mprofile_*.dat --output profiling/mprof.png
+	$(VENV_BIN)/mprof plot profiling/mprofile_*.dat --output $(MPROF_PNG)
 	@echo "Memory profile saved to profiling/"
 
 # --- Step 6: Visualize --------------------------------------------------------
