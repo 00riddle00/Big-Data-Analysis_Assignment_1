@@ -41,6 +41,7 @@ Giedraitis](https://github.com/00riddle00)
   - [Setup](#setup)
   - [Running the Pipeline](#running-the-pipeline)
   - [Running Tests](#running-tests)
+  - [Docker](#docker)
   - [Key Design Decisions](#key-design-decisions)
     - [Memory management (Anti-AI / Big Data constraint)](#memory-management-anti-ai--big-data-constraint)
     - [Dirty Data Trap](#dirty-data-trap)
@@ -376,6 +377,28 @@ make test
 
 ---
 
+## Docker
+
+A Docker image is available on Docker Hub:
+
+```bash
+# Pull and run tests
+docker pull tomasososdev/shadow-fleet
+docker run --rm tomasososdev/shadow-fleet
+
+# Run the pipeline (mount your CSV files)
+docker run --rm \
+  -v ./data_arch:/data \
+  -v ./analysis:/app/analysis \
+  -v ./loitering:/app/loitering \
+  tomasososdev/shadow-fleet \
+  python cli.py --files /data/aisdk-2025-08-13.csv /data/aisdk-2025-08-14.csv
+```
+
+Image: `tomasososdev/shadow-fleet:latest`
+
+---
+
 ## Key Design Decisions
 
 ### Memory management (Anti-AI / Big Data constraint)
@@ -452,7 +475,10 @@ shadow_fleet/
 ├── scoring.py      # DFSI calculation and ranking
 ├── benchmark.py    # Speedup, chunk-size, Amdahl's Law
 ├── visualize.py    # Folium interactive map
+├── Dockerfile      # Container image definition
+├── .dockerignore   # Excludes large/generated dirs from build context
 ├── requirements.txt
+├── .python-version # Pins Python 3.13.13 via pyenv
 ├── tests/
 │   └── test_shadow_fleet.py
 ├── data_arch/      # (gitignored) – place CSV files here
