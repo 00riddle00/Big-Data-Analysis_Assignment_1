@@ -137,7 +137,9 @@ test: .venv/.stamp
 # --- Clean --------------------------------------------------------------------
 
 clean:
-	rm -f profiling/mprofile_*.dat
+	# Remove mprof strays from root only — profiling/ dir holds intentionally committed archives
+	# (mprof run always writes to root first; make recipe moves to profiling/ on success)
+	rm -f mprofile_*.dat
 	rm -f $(PRES_DIR)/*.aux $(PRES_DIR)/*.log $(PRES_DIR)/*.nav
 	rm -f $(PRES_DIR)/*.out $(PRES_DIR)/*.snm $(PRES_DIR)/*.toc
 	rm -f $(PRES_DIR)/*.fls $(PRES_DIR)/*.fdb_latexmk $(PRES_DIR)/*.xdv
