@@ -32,7 +32,7 @@ Giedraitis](https://github.com/00riddle00)
     - [Task 5: Presentation \& Real-World Verification](#task-5-presentation--real-world-verification)
   - [Submission Guidelines](#submission-guidelines)
   - [Evaluation Criteria (10 Points Total + 1 Bonus)](#evaluation-criteria-10-points-total--1-bonus)
-  - [Amdahl’s Law (Bonus)](#amdahls-law-bonus)
+  - [Amdahl's Law (Bonus)](#amdahls-law-bonus)
   - [Final Note](#final-note)
 - [Part II — Our Implementation](#part-ii--our-implementation)
   - [Shadow Fleet Detection with Parallel Computing](#shadow-fleet-detection-with-parallel-computing)
@@ -49,6 +49,7 @@ Giedraitis](https://github.com/00riddle00)
   - [DFSI Formula](#dfsi-formula)
   - [Anomaly Thresholds](#anomaly-thresholds)
   - [Project Structure](#project-structure)
+  - [Make targets](#make-targets)
   - [Notes](#notes)
 - [Part III — Conclusion](#part-iii--conclusion)
 <!--toc:end-->
@@ -56,21 +57,29 @@ Giedraitis](https://github.com/00riddle00)
 # Part I — Assignment Specification
 
 ## Introduction
-The Baltic Sea and global shipping lanes are seeing a significant rise in "Shadow Fleet" activities. These are vessels intentionally manipulating, spoofing, or disabling their Automatic Identification System (AIS) transponders to evade sanctions, conduct illegal fishing, or perform illicit ship-to-ship cargo transfers.
+The Baltic Sea and global shipping lanes are seeing a significant rise in "Shadow Fleet"
+activities. These are vessels intentionally manipulating, spoofing, or disabling their
+Automatic Identification System (AIS) transponders to evade sanctions, conduct illegal
+fishing, or perform illicit ship-to-ship cargo transfers.
 
 ## Our Goal
-Process massive, gigabyte-scale vessel tracking datasets using parallel computing architectures to detect these illicit behaviors. You will focus on low-memory data streaming, efficient parallel partitioning, mathematical anomaly detection, and rigorous hardware performance evaluation.
+Process massive, gigabyte-scale vessel tracking datasets using parallel computing
+architectures to detect these illicit behaviors. You will focus on low-memory data
+streaming, efficient parallel partitioning, mathematical anomaly detection, and rigorous
+hardware performance evaluation.
 
 ---
 
 ## Dataset & Rules
 
 - **Dataset:** Danish Maritime Authority AIS Data: http://aisdata.ais.dk/
-- **Unique Selection:** Each student/group must select a single two day’s data. Pick a different days and coordinate in the class chat to avoid overlapping analyses.
+- **Unique Selection:** Each student/group must select a single two day's data. Pick a
+  different days and coordinate in the class chat to avoid overlapping analyses.
 
 **Our selection:**
 - Dates: 2025-08-13 and 2025-08-14
-- Motivation: We specifically chose large files to practice real big data processing (zip files ~1GB each, ~5.5GB unzipped each)
+- Motivation: We specifically chose large files to practice real big data processing
+  (zip files ~1GB each, ~5.5GB unzipped each)
 - Files:
   - aisdk-2025-08-13.csv
   - aisdk-2025-08-14.csv
@@ -78,21 +87,30 @@ Process massive, gigabyte-scale vessel tracking datasets using parallel computin
 ### ANTI-AI / BIG DATA CONSTRAINTS
 
 1. **The pandas Ban:**
-   You may not use `pandas.read_csv()` to load the entire dataset into memory. Real Big Data does not fit in RAM. You must parse the data using Python’s native `csv` module or file generators (`yield`), passing chunks or streams to your parallel workers.
-   *(Note: You may use pandas at the very end to format or graph your final top 5 results).*
+   You may not use `pandas.read_csv()` to load the entire dataset into memory. Real Big
+   Data does not fit in RAM. You must parse the data using Python's native `csv` module
+   or file generators (`yield`), passing chunks or streams to your parallel workers.
+   *(Note: You may use pandas at the very end to format or graph your final top 5
+   results).*
 
 2. **Memory Limit:**
-   Your solution must process the 2GB+ daily CSV file staying strictly under 1GB of RAM per CPU core.
+   Your solution must process the 2GB+ daily CSV file staying strictly under 1GB of RAM
+   per CPU core.
 
 ---
 
 ## The Tasks
 
 ### Task 1: Low-Memory Parallel Partitioning
-Strategize and implement the division of millions of AIS rows into parallelizable sub-tasks without loading the entire file into memory.
+Strategize and implement the division of millions of AIS rows into parallelizable
+sub-tasks without loading the entire file into memory.
 
-- Write a custom streaming partitioner that reads the file line-by-line and dispatches chunks to worker processes.
-- **The "Dirty Data" Trap:** The dataset contains default/invalid MMSI numbers (e.g., 000000000, 111111111, 123456789) from unconfigured transponders. If you blindly group by MMSI, your workers will crash from memory overload on these massive default groups. You must explicitly filter or handle these in your partitioning stream.
+- Write a custom streaming partitioner that reads the file line-by-line and dispatches
+  chunks to worker processes.
+- **The "Dirty Data" Trap:** The dataset contains default/invalid MMSI numbers (e.g.,
+  000000000, 111111111, 123456789) from unconfigured transponders. If you blindly group
+  by MMSI, your workers will crash from memory overload on these massive default groups.
+  You must explicitly filter or handle these in your partitioning stream.
 - Keep in mind that this is not the only faulty data.
 
 ---
@@ -101,17 +119,27 @@ Strategize and implement the division of millions of AIS rows into parallelizabl
 Develop Python code to process the AIS data in parallel.
 
 - Utilize native Python libraries such as `multiprocessing` or `concurrent.futures`.
-- Implement a custom Map-Reduce style logic to track vessel states chronologically within your isolated parallel workers.
+- Implement a custom Map-Reduce style logic to track vessel states chronologically
+  within your isolated parallel workers.
 
 ---
 
 ### Task 3: Shadow Fleet Detection Analytics & DFSI
-Implement algorithms to detect the following four anomalies, then calculate the custom Shadow Fleet Suspicion Index (DFSI).
+Implement algorithms to detect the following four anomalies, then calculate the custom
+Shadow Fleet Suspicion Index (DFSI).
 
-- **Anomaly A ("Going Dark"):** Find AIS gaps of > 4 hours where the geographic distance between the disappearance and reappearance coordinates implies the ship kept moving (it was not simply anchored).
-- **Anomaly B (Loitering & Transfers):** Detect two distinct, valid MMSI numbers located within 500 meters of each other, maintaining a speed (SOG) of < 1 knot, for > 2 hours.
-- **Anomaly C (Draft Changes at Sea):** Detect vessels whose draught (depth in water) changes by more than 5% during an AIS blackout of > 2 hours (implying cargo was loaded/unloaded illegally).
-- **Anomaly D (Identity Cloning / "Teleportation"):** Identify instances where the same MMSI pings from two locations requiring an impossible travel speed (> 60 knots), indicating two physical ships are broadcasting the same stolen ID.
+- **Anomaly A ("Going Dark"):** Find AIS gaps of > 4 hours where the geographic
+  distance between the disappearance and reappearance coordinates implies the ship kept
+  moving (it was not simply anchored).
+- **Anomaly B (Loitering & Transfers):** Detect two distinct, valid MMSI numbers
+  located within 500 meters of each other, maintaining a speed (SOG) of < 1 knot, for
+  > 2 hours.
+- **Anomaly C (Draft Changes at Sea):** Detect vessels whose draught (depth in water)
+  changes by more than 5% during an AIS blackout of > 2 hours (implying cargo was
+  loaded/unloaded illegally).
+- **Anomaly D (Identity Cloning / "Teleportation"):** Identify instances where the same
+  MMSI pings from two locations requiring an impossible travel speed (> 60 knots),
+  indicating two physical ships are broadcasting the same stolen ID.
 
 #### DFSI Calculation
 
@@ -136,21 +164,27 @@ $$
 - Compare execution time between sequential (1 core) and parallel implementations.
 
 #### Memory Profiling
-- Use a tool like `memory_profiler` or `mprof` to generate a graph showing your RAM usage over time.
+- Use a tool like `memory_profiler` or `mprof` to generate a graph showing your RAM
+  usage over time.
 - Prove you stayed under the memory limits.
 
 #### Chunk Optimization
-- Test different chunk sizes (e.g., 10,000 rows vs 100,000 rows per chunk) and plot the impact on execution time.
+- Test different chunk sizes (e.g., 10,000 rows vs 100,000 rows per chunk) and plot the
+  impact on execution time.
 
 ---
 
 ### Task 5: Presentation & Real-World Verification
 Create a maximum of 6 slides to defend your architecture:
 
-1. Explain your low-memory partitioning strategy and how you handled the Dirty Data trap.
+1. Explain your low-memory partitioning strategy and how you handled the Dirty Data
+   trap.
 2. Show your Speedup and Memory Profiling graphs.
-3. **Real-World Proof:** Take the coordinates of your highest DFSI scoring vessel, plug them into Maps, and include a screenshot. Explain the geographical context (e.g., "This ship went dark exactly on the border of the Russian EEZ").
-4. **Code Defense:** One student from each group will be randomly selected to explain specific lines of the parallel code during the presentation.
+3. **Real-World Proof:** Take the coordinates of your highest DFSI scoring vessel, plug
+   them into Maps, and include a screenshot. Explain the geographical context (e.g.,
+   "This ship went dark exactly on the border of the Russian EEZ").
+4. **Code Defense:** One student from each group will be randomly selected to explain
+   specific lines of the parallel code during the presentation.
 
 ---
 
@@ -158,7 +192,9 @@ Create a maximum of 6 slides to defend your architecture:
 
 - **Deadline:** TBA (April / May 2026)
 
-- **Code Repository:** Provide a link to your GitHub/GitLab repository. The repo must include a clean README.md, your .py scripts, and a requirements.txt. Do not upload the 2GB CSV file to GitHub.
+- **Code Repository:** Provide a link to your GitHub/GitLab repository. The repo must
+  include a clean README.md, your .py scripts, and a requirements.txt. Do not upload
+  the 2GB CSV file to GitHub.
 - **Presentation:** Submit your 6 slides in PDF format.
 
 ---
@@ -176,7 +212,7 @@ Create a maximum of 6 slides to defend your architecture:
 
 ---
 
-## Amdahl’s Law (Bonus)
+## Amdahl's Law (Bonus)
 
 $$
 S = \frac{1}{(1 - P) + \frac{P}{N}}
@@ -189,7 +225,8 @@ Where:
 ---
 
 ## Final Note
-Remember, I am not just looking for code that "runs." I am looking for code that scales. Think deeply about how your data moves from your hard drive to your CPU cores.
+Remember, I am not just looking for code that "runs." I am looking for code that
+scales. Think deeply about how your data moves from your hard drive to your CPU cores.
 
 ---
 
@@ -270,16 +307,39 @@ data_arch/*.csv  →  cli.py  →  pipeline.py  →  partition.py  →  parsing.
 git clone <repo-url> ./shadow_fleet
 cd shadow_fleet
 
-pip install -r requirements.txt
-
 # Place the AIS CSV files in data_arch/:
 mkdir -p data_arch
 # (files not included – download from http://aisdata.ais.dk/)
 ```
 
+Install dependencies using make:
+
+```bash
+make deps
+```
+
+Or manually:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate      # Linux/macOS
+# .\venv\Scripts\activate      # Windows
+pip install -r requirements.txt
+```
+
 ---
 
 ## Running the Pipeline
+
+```bash
+make run           # Full parallel run
+make benchmark     # Speedup + chunk-size benchmark suite
+make profile       # Memory profiling (mprof)
+make visualize     # Interactive Folium map of top-5 vessels
+make all           # All of the above from scratch
+```
+
+For manual runs without make:
 
 ```bash
 # Full parallel run (uses all available cores - 1):
@@ -310,7 +370,8 @@ python visualize.py
 ## Running Tests
 
 ```bash
-python -m pytest tests/ -v
+make test
+# or: python -m pytest tests/ -v
 ```
 
 ---
@@ -402,6 +463,25 @@ shadow_fleet/
 
 ---
 
+## Make targets
+
+```bash
+make help          # show all available targets
+make all           # run the full pipeline from scratch
+make deps          # create virtual environment and install dependencies
+make data          # show instructions for downloading AIS data
+make run           # run the parallel detection pipeline
+make benchmark     # run speedup and chunk-size benchmark suite
+make profile       # run memory profiling (mprof)
+make visualize     # generate interactive Folium map of top-5 vessels
+make presentation  # compile LaTeX slides to PDF
+make test          # run unit tests
+make clean         # remove LaTeX build artifacts and mprof raw data
+make distclean     # clean + remove partitioned shards
+```
+
+---
+
 ## Notes
 
 - The 2 GB CSV files **are not uploaded to GitHub** (see `.gitignore`).
@@ -413,4 +493,6 @@ shadow_fleet/
 
 # Part III — Conclusion
 
-This project demonstrates scalable big data processing using streaming and parallel computation under strict memory constraints, successfully identifying anomalous maritime behavior.
+This project demonstrates scalable big data processing using streaming and parallel
+computation under strict memory constraints, successfully identifying anomalous maritime
+behavior.
