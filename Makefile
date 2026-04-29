@@ -1,3 +1,4 @@
+# vim: set ft=make tw=100 nu noet ts=8 sw=8:
 # ==============================================================================
 # Big Data Analysis — AIS Shadow Fleet Detection
 #
@@ -27,17 +28,17 @@
 PYTHON     := python3
 PIP        := .venv/bin/pip
 LATEXMK    := latexmk
+STAMP_DATE := date "+%F %T %Z"
 
-PRES_DIR   := presentation
+PRES_DIR     := presentation
 PRESENTATION := $(PRES_DIR)/presentation_1st.pdf
 
-VENV       := .venv
-VENV_DONE  := $(VENV)/.done
+VENV := .venv
 
-PIPELINE_DONE := analysis/top5_vessels.csv
-BENCHMARK_DONE := benchmark_results/speedup_results.json
-PROFILE_DONE   := profiling/mprof.png
-VISUALIZE_DONE := analysis/top5_map.html
+TOP5_CSV     := analysis/top5_vessels.csv
+SPEEDUP_JSON := benchmark_results/speedup_results.json
+MPROF_PNG    := profiling/mprof.png
+FOLIUM_MAP   := analysis/top5_map.html
 
 # --- Phony targets ------------------------------------------------------------
 
@@ -69,13 +70,18 @@ help:
 
 # --- Step 1: Dependencies -----------------------------------------------------
 
-deps: $(VENV_DONE)
+deps: $(VENV)/.stamp
 
-$(VENV_DONE):
+# Rebuilds venv if requirements.txt has a newer timestamp than .stamp.
+# Note: git operations (pull, checkout) can update file timestamps,
+# causing an unnecessary rebuild. This is harmless but slow —
+# `python -m venv .venv` reinitializes the venv structure without wiping
+# installed packages, and pip skips already-installed dependencies.
+$(VENV)/.stamp: requirements.txt
 	$(PYTHON) -m venv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
-	@touch $@
+	$(STAMP_DATE) > $@
 	@echo "Python dependencies installed in $(VENV)/"
 
 # --- Step 2: Data -------------------------------------------------------------
@@ -93,25 +99,25 @@ data:
 
 # --- Step 3: Run pipeline -----------------------------------------------------
 
-run: $(PIPELINE_DONE)
+run: $(TOP5_CSV)
 
-$(PIPELINE_DONE): $(VENV_DONE)
+$(TOP5_CSV): $(VENV)/.stamp
 	$(VENV)/bin/python cli.py
 	@echo "Pipeline complete. Results in analysis/ and loitering/"
 
 # --- Step 4: Benchmark --------------------------------------------------------
 
-benchmark: $(BENCHMARK_DONE)
+benchmark: $(SPEEDUP_JSON)
 
-$(BENCHMARK_DONE): $(VENV_DONE)
+$(SPEEDUP_JSON): $(VENV)/.stamp
 	$(VENV)/bin/python cli.py --benchmark
 	@echo "Benchmark complete. Results in benchmark_results/"
 
 # --- Step 5: Memory profiling -------------------------------------------------
 
-profile: $(PROFILE_DONE)
+profile: $(MPROF_PNG)
 
-$(PROFILE_DONE): $(VENV_DONE)
+$(MPROF_PNG): $(VENV)/.stamp
 	mkdir -p profiling
 	$(VENV)/bin/mprof run $(VENV)/bin/python cli.py
 	mv mprofile_*.dat profiling/
@@ -120,9 +126,9 @@ $(PROFILE_DONE): $(VENV_DONE)
 
 # --- Step 6: Visualize --------------------------------------------------------
 
-visualize: $(VISUALIZE_DONE)
+visualize: $(FOLIUM_MAP)
 
-$(VISUALIZE_DONE): $(PIPELINE_DONE)
+$(FOLIUM_MAP): $(TOP5_CSV)
 	$(VENV)/bin/python visualize.py
 	@echo "Folium map saved to analysis/top5_map.html"
 
@@ -136,7 +142,7 @@ $(PRESENTATION): $(PRES_DIR)/presentation_1st.tex
 
 # --- Tests --------------------------------------------------------------------
 
-test: $(VENV_DONE)
+test: $(VENV)/.stamp
 	$(VENV)/bin/pytest tests/ -v
 
 # --- Clean --------------------------------------------------------------------
