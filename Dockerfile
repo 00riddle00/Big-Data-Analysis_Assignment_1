@@ -21,7 +21,8 @@ WORKDIR /app
 
 # Install dependencies first (separate layer — rebuilds only when requirements change)
 COPY requirements.txt .
-RUN pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
 
 # Copy source code
 COPY *.py ./
