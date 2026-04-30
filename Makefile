@@ -31,8 +31,8 @@ FOLIUM_MAP   := analysis/top5_map.html
 
 # --- Phony targets ------------------------------------------------------------
 
-.PHONY: all deps data run benchmark profile visualize presentation \
-        test clean distclean help
+.PHONY: all deps export-requirements import-requirements data run benchmark profile visualize \
+	presentation test clean distclean help
 
 # --- Default: full pipeline ---------------------------------------------------
 
@@ -44,17 +44,19 @@ all: deps data run benchmark profile visualize presentation
 
 help:
 	@echo ""
-	@echo "  make all           Run the full pipeline from scratch"
-	@echo "  make deps          Create virtual environment and install dependencies"
-	@echo "  make data          Show instructions for downloading AIS data"
-	@echo "  make run           Run the parallel detection pipeline"
-	@echo "  make benchmark     Run speedup and chunk-size benchmark suite"
-	@echo "  make profile       Run memory profiling (mprof)"
-	@echo "  make visualize     Generate interactive Folium map of top-5 vessels"
-	@echo "  make presentation  Compile LaTeX slides to PDF"
-	@echo "  make test          Run unit tests"
-	@echo "  make clean         Remove LaTeX build artifacts and mprof raw data"
-	@echo "  make distclean     clean + remove partitioned shards"
+	@echo "  make all                  Run the full pipeline from scratch"
+	@echo "  make deps                 Create virtual environment and install dependencies"
+	@echo "  make export-requirements  Export uv dependencies to requirements.txt"
+	@echo "  make import-requirements  Import requirements.txt into uv"
+	@echo "  make data                 Show instructions for downloading AIS data"
+	@echo "  make run                  Run the parallel detection pipeline"
+	@echo "  make benchmark            Run speedup and chunk-size benchmark suite"
+	@echo "  make profile              Run memory profiling (mprof)"
+	@echo "  make visualize            Generate interactive Folium map of top-5 vessels"
+	@echo "  make presentation         Compile LaTeX slides to PDF"
+	@echo "  make test                 Run unit tests"
+	@echo "  make clean                Remove LaTeX build artifacts and mprof raw data"
+	@echo "  make distclean            Clean + remove partitioned shards"
 	@echo ""
 
 # --- Step 1: Dependencies -----------------------------------------------------
@@ -72,6 +74,21 @@ deps: .venv/.stamp
 	$(VENV_BIN)/pip install -r requirements.txt
 	$(STAMP_DATE) > $@
 	@echo "Python dependencies installed."
+
+# Export uv-managed dependencies to classic requirements.txt for pip-based setup.
+export-requirements:
+	uv export \
+	  --format requirements-txt \
+	  --no-hashes \
+	  --no-header \
+	  --no-annotate \
+	  > requirements.txt
+
+# Import updated requirements.txt into uv workflow.
+import-requirements:
+	uv add -r requirements.txt
+	uv lock
+	uv sync
 
 # --- Step 2: Data -------------------------------------------------------------
 

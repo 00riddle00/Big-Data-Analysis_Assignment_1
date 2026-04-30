@@ -328,6 +328,21 @@ source .venv/bin/activate      # Linux/macOS
 pip install -r requirements.txt
 ```
 
+NOTE: This project uses `uv` internally for Python dependency locking. `requirements.txt`
+is kept as a `pip`-compatible export for university setup.
+
+After changing dependencies with `uv`, run:
+
+```bash
+$ make export-requirements
+```
+
+After changing dependencies with pip and updating `requirements.txt`, run:
+
+```bash
+$ make import-requirements
+```
+
 ---
 
 ## Running the Pipeline
@@ -477,6 +492,8 @@ shadow_fleet/
 ├── visualize.py    # Folium interactive map
 ├── Dockerfile      # Container image definition
 ├── .dockerignore   # Excludes large/generated dirs from build context
+├── pyproject.toml  # Python project metadata and direct dependencies
+├── uv.lock         # Locked Python dependency graph
 ├── requirements.txt
 ├── .python-version # Pins Python 3.13.13 via pyenv
 ├── tests/
@@ -492,18 +509,20 @@ shadow_fleet/
 ## Make targets
 
 ```bash
-make help          # show all available targets
-make all           # run the full pipeline from scratch
-make deps          # create virtual environment and install dependencies
-make data          # show instructions for downloading AIS data
-make run           # run the parallel detection pipeline
-make benchmark     # run speedup and chunk-size benchmark suite
-make profile       # run memory profiling (mprof)
-make visualize     # generate interactive Folium map of top-5 vessels
-make presentation  # compile LaTeX slides to PDF
-make test          # run unit tests
-make clean         # remove LaTeX build artifacts and mprof raw data
-make distclean     # clean + remove partitioned shards
+make help                 # Show all available targets
+make all                  # Run the full pipeline from scratch
+make deps                 # Create virtual environment and install dependencies
+make export-requirements  # Export uv dependencies to requirements.txt
+make import-requirements  # Import requirements.txt into uv
+make data                 # Show instructions for downloading AIS data
+make run                  # Run the parallel detection pipeline
+make benchmark            # Run speedup and chunk-size benchmark suite
+make profile              # Run memory profiling (mprof)
+make visualize            # Generate interactive Folium map of top-5 vessels
+make presentation         # Compile LaTeX slides to PDF
+make test                 # Run unit tests
+make clean                # Remove LaTeX build artifacts and mprof raw data
+make distclean            # Clean + remove partitioned shards
 ```
 
 ---
